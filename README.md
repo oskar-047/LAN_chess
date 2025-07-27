@@ -1,4 +1,4 @@
-# LAN Chess
+# LAN Chess (PROJECT IN PROGRES)
 
 ## Description
 A personal project: a two-player chess game playable over LAN.  
