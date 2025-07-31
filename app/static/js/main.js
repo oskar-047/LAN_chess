@@ -19,9 +19,11 @@ startGame();
 
 // All the logic to initialize a game
 function startGame(){
+    createGame();
     createChessboard();
     initializePieces();
 }
+
 
 
 // A function to create the chessboard tiles
@@ -37,6 +39,11 @@ function createChessboard() {
 
             tile.style.backgroundColor = chessboardColor[row][col] ? "#D18B47" : "#FFCE9E";
 
+            let pieceImg = document.createElement("img");
+            pieceImg.classList.add("piece-img");
+
+            tile.appendChild(pieceImg);
+
             tile.addEventListener("click", () => tileClick(row, col));
 
             chessboard.appendChild(tile);
@@ -45,14 +52,53 @@ function createChessboard() {
 }
 
 
-// Function that initializes all the chessboard pieces
-async function initializePieces(){
-    const pieces = await fetchChessboard();
-    alert(JSON.stringify(pieces));
+function createGame() {
+    fetch("/new-game");
 }
 
 
-async function fetchChessboard(){
+// Function that initializes all the chessboard pieces
+async function initializePieces(){
+    const board = await getChessboard();
+
+    for(let row = 0; row <8; row++){
+        for(let col = 0; col <8; col++){
+            
+            let pieceImg = document.querySelector(`[data-row='${row}'][data-col='${col}']`).firstElementChild;
+
+            if (board[row][col] == 0){
+                pieceImg.src = "";
+                continue;
+            }
+
+            pieceImg.src = `static/img/${board[row][col]}.png`;
+            
+        }
+    }
+
+    // alert(JSON.stringify(pieces));
+}
+
+async function showPosibleMoves(){
+    
+    const result = await fetch("/get-posible-moves");
+
+    // await is used because result.json() returns a promise, the await waits to the promise being resolved
+    const posibleMoves = await result.json();
+
+    for(let row = 0; row < 8; row++){
+        for(let col = 0; col < 8; col++){
+            let tile = document.querySelector(`[data-row='${row}'][data-col='${col}']`);
+            if (posibleMoves[row][col] == 1){
+                tile.style.backgroundColor = "green";
+            } else {
+                tile.style.backgroundColor = chessboardColor[row][col] ? "#D18B47" : "#FFCE9E";
+            }
+        }
+    }
+}
+
+async function getChessboard(){
     // await pauses the function until the fetch is resolved
     const result = await fetch("/get-board");
 
@@ -65,4 +111,12 @@ async function fetchChessboard(){
 
 function tileClick(row, col) {
     alert(`${row} ${col}`);
+    fetch(`/clic?row=${row}&col=${col}`);
 }
+
+
+// Polling the server for updates
+setInterval(async () => {
+    initializePieces();
+    showPosibleMoves();
+}, 200);
