@@ -81,11 +81,9 @@ async function initializePieces(){
 
 async function showPosibleMoves(){
     
-    const result = await fetch("/get-posible-moves");
+    const posibleMoves = await getPosibleMoves();
 
-    // await is used because result.json() returns a promise, the await waits to the promise being resolved
-    const posibleMoves = await result.json();
-
+    // Goes through all the chessboard marking the posible moves
     for(let row = 0; row < 8; row++){
         for(let col = 0; col < 8; col++){
             let tile = document.querySelector(`[data-row='${row}'][data-col='${col}']`);
@@ -108,15 +106,26 @@ async function getChessboard(){
     return board;
 }
 
+async function getPosibleMoves(){
+    const result = await fetch("/get-posible-moves");
+
+    const posibleMoves = await result.json();
+
+    return posibleMoves;
+}
+
 
 function tileClick(row, col) {
-    alert(`${row} ${col}`);
+    // alert(`${row} ${col}`);
     fetch(`/clic?row=${row}&col=${col}`);
 }
+
+
 
 
 // Polling the server for updates
 setInterval(async () => {
     initializePieces();
     showPosibleMoves();
+    //let posibleMoves = await getPosibleMoves();
 }, 200);

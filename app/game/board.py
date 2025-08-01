@@ -19,7 +19,7 @@ class Board:
             [0, 0, 0, 0, 0, 0, 0, 0],
             [0, 0, 0, 0, 0, 0, 0, 0],
             [0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0],
+            [13, 0, 11, 0, 0, 14, 0, 0],
             [1, 1, 1, 1, 1, 1, 1, 1],
             [2, 3, 4, 5, 6, 4, 3, 2],
         ]
@@ -39,3 +39,7 @@ class Board:
     def move_piece(self, src_row, src_col, dest_row, dest_col):
         self.board[dest_row][dest_col] = self.board[src_row][src_col]
         self.board[src_row][src_col] = 0
+
+    def reset_move(self):
+        self.selected_piece = None
+        self.possible_moves = [[0] * 8 for _ in range(8)]
