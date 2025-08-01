@@ -1,5 +1,12 @@
 def get_color(row, col, board):
-    color = "white" if board[row][col] < 10 else "black"
+
+    piece = board[row][col]
+    
+    if piece == 0: 
+        return "ERROR"
+
+    color = "white" if piece < 10 else "black"
+
     return color
 
 

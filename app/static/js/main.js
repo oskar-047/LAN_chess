@@ -128,4 +128,4 @@ setInterval(async () => {
     initializePieces();
     showPosibleMoves();
     //let posibleMoves = await getPosibleMoves();
-}, 200);
+}, 100);
