@@ -7,7 +7,7 @@ from game.generator.knight import generate_knight_moves
 from game.generator.king import generate_king_moves
 from game.generator.bishop import generate_bishop_moves
 
-#  the function will only receive the info of the clic and will with all the other backend funcstionsmanage what to do, when it have a result will send the new board status and a int var indicating the action to do, like, 1 = only move, 2= ilegal move, 3=pawn promting, 4= checkamte and so on
+#  the function will only receive the info of the click and will with all the other backend funcstionsmanage what to do, when it have a result will send the new board status and a int var indicating the action to do, like, 1 = only move, 2= ilegal move, 3=pawn promting, 4= checkamte and so on
 
 # Input: clicked coordinates.
 # Processing: internal logic decides what happened.
@@ -33,31 +33,46 @@ generator_handlers = {
 
 def tile_clicked(row: int, col: int):
 
+    # Saves the piece
     piece = game.get_piece(row, col)
+    # Saves the color of the piece
+    piece_color = get_color(row, col, game.board)
+
+    # If the clicked piece is not same color as the current turn, it will not do anything
+    if piece_color and game.turn != piece_color:
+        print("AAAAAAAAAAAAAAAAAAAAA")
+        return
 
 
-    # MOVEMENT LOGIC
+    # --- MOVEMENT LOGIC ---
+    # Checks if the clicked square its a possible move
     if game.possible_moves and game.possible_moves[row][col] == 1:
 
-        is_eating = True if game.board[row][col] != 0 else False
+        capturing = True if game.board[row][col] != 0 else False
 
         sel_row, sel_col = game.selected_piece
 
+        # Updates the piece on the clicked square
         game.board[row][col] = game.board[sel_row][sel_col]
+
+        # Removes the piece from the previous square
         game.board[sel_row][sel_col] = 0
 
+        game.change_turn()
+
         # If is eating it means the var "piece" is not 0, that's why it won't trigger the if below and have to reset now
-        if is_eating:
+        if capturing:
             game.reset_move()
             return
 
-    # If the clic is in an empty square it will deselect the piece
+    # If the click is in an empty square it will deselect the piece
     if piece == 0:
         game.reset_move()
         return
     
-    # Saves the color of the piece
-    piece_color = get_color(row, col, game.board)
+
+    # --- SELECT PIECE LOGIC ---
+    
 
     # If there isn't a piece selected, its marks the actual square piece as selected
     if game.selected_piece is None:

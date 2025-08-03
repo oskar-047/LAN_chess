@@ -3,7 +3,7 @@ def get_color(row, col, board):
     piece = board[row][col]
     
     if piece == 0: 
-        return "ERROR"
+        return None
 
     color = "white" if piece < 10 else "black"
 

@@ -1,7 +1,7 @@
 class Board:
     def __init__(self):
         self.board = self._init_board()
-        self.is_white_turn = True
+        self.turn = "white"
         self.selected_piece = None # Indicates which piece is selected
         self.possible_moves = [[0] * 8 for _ in range(8)]
         self.full_moves = 1
@@ -43,3 +43,6 @@ class Board:
     def reset_move(self):
         self.selected_piece = None
         self.possible_moves = [[0] * 8 for _ in range(8)]
+
+    def change_turn(self):
+        self.turn = "black" if self.turn == "white" else "white"
