@@ -1,5 +1,7 @@
 from game.utils import get_color
 
+
+
 def generate_piece_moves(row, col, board, color, directions, infinite):
 
     moves = [[0 for _ in range(8)] for _ in range(8)]

@@ -1,6 +1,9 @@
+import copy
+
 class Board:
     def __init__(self):
         self.board = self._init_board()
+        self.previous_board = None # Saves the previous board if a ilegal move is donde
         self.turn = "white"
         self.selected_piece = None # Indicates which piece is selected
         self.possible_moves = [[0] * 8 for _ in range(8)]
@@ -12,12 +15,13 @@ class Board:
         self.black_queenside_castle = True
 
 
+    # Inits a defualt chess board
     def _init_board(self):
         return [
             [12, 13, 14, 15, 16, 14, 13, 12],
             [11, 11, 11, 11, 11, 11, 11, 11],
             [0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 6, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0],
             [0, 0, 0, 0, 0, 0, 0, 0],
             [0, 0, 0, 0, 0, 0, 0, 0],
             [1, 1, 1, 1, 1, 1, 1, 1],
@@ -40,9 +44,13 @@ class Board:
         self.board[dest_row][dest_col] = self.board[src_row][src_col]
         self.board[src_row][src_col] = 0
 
-    def reset_move(self):
+    def reset_selected_piece(self):
         self.selected_piece = None
         self.possible_moves = [[0] * 8 for _ in range(8)]
 
     def change_turn(self):
         self.turn = "black" if self.turn == "white" else "white"
+
+    def reset_move(self):
+        self.board = copy.deepcopy(self.previous_board)
+        self.change_turn()

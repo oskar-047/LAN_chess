@@ -1,5 +1,8 @@
 from .board import Board
+import copy
 from game.utils import get_color
+from game.rules import check_legality
+from game.generator.generator_handler import generator_handlers
 from game.generator.pawn import generate_pawn_moves
 from game.generator.queen import generate_queen_moves
 from game.generator.rook import generate_rook_moves
@@ -14,22 +17,6 @@ from game.generator.bishop import generate_bishop_moves
 # Output: new board state + integer action code.
 
 game = Board()
-
-generator_handlers = {
-    1: generate_pawn_moves,    # white pawn
-    2: generate_rook_moves,    # white rook
-    3: generate_knight_moves,  # white knight
-    4: generate_bishop_moves,  # white bishop
-    5: generate_queen_moves,   # white queen
-    6: generate_king_moves,    # white king
-
-    11: generate_pawn_moves,    # black pawn
-    12: generate_rook_moves,    # black rook
-    13: generate_knight_moves,  # black knight
-    14: generate_bishop_moves,  # black bishop
-    15: generate_queen_moves,   # black queen
-    16: generate_king_moves,    # black king
-}
 
 def tile_clicked(row: int, col: int):
 
@@ -52,22 +39,17 @@ def tile_clicked(row: int, col: int):
 
         sel_row, sel_col = game.selected_piece
 
-        # Updates the piece on the clicked square
-        game.board[row][col] = game.board[sel_row][sel_col]
-
-        # Removes the piece from the previous square
-        game.board[sel_row][sel_col] = 0
-
-        game.change_turn()
+        # Runs the move logic
+        move_piece(game, (sel_row, sel_col), (row, col))
 
         # If is eating it means the var "piece" is not 0, that's why it won't trigger the if below and have to reset now
         if capturing:
-            game.reset_move()
+            game.reset_selected_piece()
             return
 
     # If the click is in an empty square it will deselect the piece
     if piece == 0:
-        game.reset_move()
+        game.reset_selected_piece()
         return
     
 
@@ -97,7 +79,35 @@ def tile_clicked(row: int, col: int):
 
 
 
+# Piece movement function
+def move_piece(game, from_pos, to_pos):
 
+    # Save the pieces pos
+    sel_row, sel_col = from_pos
+    row, col = to_pos
+
+    # Saves the board before the move is donde, for later check if the move was ilegal and have to return to the previous position
+    game.previous_board = copy.deepcopy(game.board)
+
+    # Updates the piece on the clicked square
+    game.board[row][col] = game.board[sel_row][sel_col]
+
+    # Removes the piece from the previous square
+    game.board[sel_row][sel_col] = 0
+
+    game.change_turn()
+
+    ilegal_move = check_legality(game.board, game.turn)
+    if not ilegal_move:
+        print("THE MOVEMENTE WAS ILEGAL")
+        print("THE MOVEMENTE WAS ILEGAL")
+        print("THE MOVEMENTE WAS ILEGAL")
+        print("THE MOVEMENTE WAS ILEGAL")
+        print("THE MOVEMENTE WAS ILEGAL")
+        print("THE MOVEMENTE WAS ILEGAL")
+        print("THE MOVEMENTE WAS ILEGAL")
+        print("THE MOVEMENTE WAS ILEGAL")
+        game.reset_move()
 
 # Creates a new game and return the board to the frontend
 def create_new_game():

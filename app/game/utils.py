@@ -16,3 +16,12 @@ def function_A():
 
 def function_B():
     return "hello"
+
+def find_king(color, board):
+    piece_to_find = 6 if color == "white" else 16
+
+    for row in range(8):
+        for col in range(8):
+            if board[row][col] == piece_to_find:
+                return row, col
+    
