@@ -9,6 +9,10 @@ class Board:
         self.possible_moves = [[0] * 8 for _ in range(8)]
         self.full_moves = 1
         self.halfmove_clock = 0 # It increases in each move when there are no captures and none pawn has moved, if a pawn is moved or a capture is made, it resets to 0; if it reaches 100, either player can claim draw
+        self.black_king_pos = (0, 4)
+        self.previous_black_king_pos = (0, 4)
+        self.white_king_pos = (7, 4)
+        self.previous_white_king_pos = (7, 4)
         self.white_kingside_castle = True
         self.white_queenside_castle = True
         self.black_kingside_castle = True
@@ -52,5 +56,8 @@ class Board:
         self.turn = "black" if self.turn == "white" else "white"
 
     def reset_move(self):
-        self.board = copy.deepcopy(self.previous_board)
+        self.board = [row[:] for row in self.previous_board]
+        self.black_king_pos = self.previous_black_king_pos
+        self.white_king_pos = self.previous_white_king_pos
         self.change_turn()
+        

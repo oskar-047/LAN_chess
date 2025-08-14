@@ -25,12 +25,6 @@ def tile_clicked(row: int, col: int):
     # Saves the color of the piece
     piece_color = get_color(row, col, game.board)
 
-    # If the clicked piece is not same color as the current turn, it will not do anything
-    if piece_color and game.turn != piece_color:
-        print("AAAAAAAAAAAAAAAAAAAAA")
-        return
-
-
     # --- MOVEMENT LOGIC ---
     # Checks if the clicked square its a possible move
     if game.possible_moves and game.possible_moves[row][col] == 1:
@@ -44,11 +38,14 @@ def tile_clicked(row: int, col: int):
 
         # If is eating it means the var "piece" is not 0, that's why it won't trigger the if below and have to reset now
         if capturing:
+            print("Piece eaten")
             game.reset_selected_piece()
             return
 
+    # --- CHECK TURN AND IF TILE IS 0 TO RESET/END THE MOVE
     # If the click is in an empty square it will deselect the piece
-    if piece == 0:
+    if (piece == 0) or (piece_color and game.turn != piece_color):
+        print("not same turn color, or no piece selected")
         game.reset_selected_piece()
         return
     
@@ -87,18 +84,29 @@ def move_piece(game, from_pos, to_pos):
     row, col = to_pos
 
     # Saves the board before the move is donde, for later check if the move was ilegal and have to return to the previous position
-    game.previous_board = copy.deepcopy(game.board)
+    game.previous_board = [row[:] for row in game.board]
+    game.previous_black_king_pos = game.black_king_pos
+    game.previous_white_king_pos = game.white_king_pos
 
     # Updates the piece on the clicked square
     game.board[row][col] = game.board[sel_row][sel_col]
+    print("PIECE MOVED")
 
     # Removes the piece from the previous square
     game.board[sel_row][sel_col] = 0
+    print("PAST PIECE DELETED")
 
     game.change_turn()
+    
 
-    ilegal_move = check_legality(game.board, game.turn)
-    if not ilegal_move:
+    if game.board[row][col] == 16:
+        game.black_king_pos = (row, col)
+    
+    if game.board[row][col] == 6:
+        game.white_king_pos = (row, col)
+
+    legal_move = check_legality(game.board, game.turn, game)
+    if not legal_move:
         print("THE MOVEMENTE WAS ILEGAL")
         print("THE MOVEMENTE WAS ILEGAL")
         print("THE MOVEMENTE WAS ILEGAL")
@@ -108,6 +116,7 @@ def move_piece(game, from_pos, to_pos):
         print("THE MOVEMENTE WAS ILEGAL")
         print("THE MOVEMENTE WAS ILEGAL")
         game.reset_move()
+        
 
 # Creates a new game and return the board to the frontend
 def create_new_game():
